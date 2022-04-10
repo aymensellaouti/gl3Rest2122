@@ -5,18 +5,19 @@ import {
   Get,
   Param,
   Patch,
-  Post, Query,
-  Req
-} from "@nestjs/common";
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { Todo } from './Model/todo.model';
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { TodoService } from './todo.service';
 import { TodoEntity } from './Entity/todo.entity';
 import { UpdateTodoDto } from './update-todo.dto';
-import { UpdateResult } from "typeorm/query-builder/result/UpdateResult";
-import { DeleteResult } from "typeorm/query-builder/result/DeleteResult";
-import { SearchTodoDto } from "./dto/search-todo.dto";
+import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
+import { DeleteResult } from 'typeorm/query-builder/result/DeleteResult';
+import { SearchTodoDto } from './dto/search-todo.dto';
 @Controller({
   path: 'todo',
   version: '2',
@@ -27,7 +28,17 @@ export class TodoDBController {
   getTodos(@Query() searchTodoDto: SearchTodoDto): Promise<TodoEntity[]> {
     return this.todoService.findAll(searchTodoDto);
   }
-
+  @Get('all/:page')
+  getAllTodos(
+    @Query() searchTodoDto: SearchTodoDto,
+    @Param('page') page: number,
+  ): Promise<TodoEntity[]> {
+    return this.todoService.findAllByPage(searchTodoDto, page);
+  }
+  @Get('stats/')
+  getStats(@Body() searchTodoDto: SearchTodoDto) {
+    return this.todoService.getStats(searchTodoDto);
+  }
   @Post()
   addTodo(@Body() newTodoData: Partial<TodoEntity>): Promise<TodoEntity> {
     return this.todoService.addTodo(newTodoData);

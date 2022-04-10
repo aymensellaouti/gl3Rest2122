@@ -7,4 +7,14 @@ export class SearchTodoDto {
   @IsOptional()
   @IsEnum(TodoStatusEnum)
   status: TodoStatusEnum;
+  @IsOptional()
+  name: string;
+  @IsOptional()
+  description: string;
+  @IsOptional()
+  page = 1;
+  @IsOptional()
+  dateDepart: Date ;
+  @IsOptional()
+  dateArrival: Date;
 }

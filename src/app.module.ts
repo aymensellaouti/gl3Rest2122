@@ -1,12 +1,16 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { PremierModule } from './premier/premier.module';
 import { TodoModule } from './todo/todo.module';
 import { ConfigModule } from '@nestjs/config';
 import { devConfig } from './config/dev.config';
-import { prodConfig } from "./config/prod.config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { TodoEntity } from "./todo/Entity/todo.entity";
+import { prodConfig } from './config/prod.config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TodoEntity } from './todo/Entity/todo.entity';
+import { UserModule } from './user/user.module';
+import { CvModule } from './cv/cv.module';
+import { SkillModule } from './skill/skill.module';
 
 @Module({
   imports: [
@@ -21,12 +25,15 @@ import { TodoEntity } from "./todo/Entity/todo.entity";
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '',
-      database: 'gl322',
+      password: 'Spn.Meriem123',
+      database: 'nest',
       autoLoadEntities: true,
       synchronize: true,
       debug: true,
     }),
+    CvModule,
+    SkillModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [],

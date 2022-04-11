@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Like, Repository } from "typeorm";
+import { Between, Like, Repository } from 'typeorm';
 import { TodoEntity } from './Entity/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateTodoDto } from './update-todo.dto';
@@ -13,6 +13,26 @@ export class TodoService {
     @InjectRepository(TodoEntity)
     private todoRepository: Repository<TodoEntity>,
   ) {}
+  async getStats(searchTodoDto: SearchTodoDto) {
+    if (searchTodoDto.dateArrival && searchTodoDto.dateDepart) {
+      return await this.todoRepository.count({
+        withDeleted: true,
+        where: [
+          { status: searchTodoDto.status },
+          {
+            createdAt: Between(
+              searchTodoDto.dateDepart,
+              searchTodoDto.dateArrival,
+            ),
+          },
+        ],
+      });
+    }
+    return await this.todoRepository.count({
+      withDeleted: true,
+      where: { status: searchTodoDto.status },
+    });
+  }
   addTodo(todo: Partial<TodoEntity>): Promise<TodoEntity> {
     return this.todoRepository.save(todo);
   }
@@ -52,18 +72,51 @@ export class TodoService {
     throw new NotFoundException(`Le todo d'id ${id} n'existe pas `);
   }
 
-  findAll(searchTodoDto: SearchTodoDto): Promise<TodoEntity[]> {
+  async findAll(searchTodoDto: SearchTodoDto): Promise<TodoEntity[]> {
     const criterias = [];
     if (searchTodoDto.status) {
       criterias.push({ status: searchTodoDto.status });
     }
+    console.log(searchTodoDto);
     if (searchTodoDto.criteria) {
       criterias.push({ name: Like(`%${searchTodoDto.criteria}%`) });
       criterias.push({ description: Like(`%${searchTodoDto.criteria}%`) });
     }
+    console.log(criterias);
     if (criterias.length) {
-      return this.todoRepository.find({ withDeleted: true, where: criterias });
+      return await this.todoRepository.find({
+        withDeleted: true,
+        where: criterias,
+      });
     }
-    return this.todoRepository.find({ withDeleted: true});
+    return await this.todoRepository.find({ withDeleted: true });
+  }
+  async findAllByPage(
+    searchTodoDto: SearchTodoDto,
+    page: number,
+  ): Promise<TodoEntity[]> {
+    const criterias = [];
+    if (searchTodoDto.status) {
+      criterias.push({ status: searchTodoDto.status });
+    }
+    console.log(searchTodoDto);
+    if (searchTodoDto.criteria) {
+      criterias.push({ name: Like(`%${searchTodoDto.criteria}%`) });
+      criterias.push({ description: Like(`%${searchTodoDto.criteria}%`) });
+    }
+    console.log(criterias);
+    if (criterias.length) {
+      return await this.todoRepository.find({
+        withDeleted: true,
+        where: criterias,
+        skip: (page - 1) * 3,
+        take: 3,
+      });
+    }
+    return await this.todoRepository.find({
+      withDeleted: true,
+      skip: (page - 1) * 3,
+      take: 3,
+    });
   }
 }

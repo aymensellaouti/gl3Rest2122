@@ -7,11 +7,18 @@ import { devConfig } from './config/dev.config';
 import { prodConfig } from "./config/prod.config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TodoEntity } from "./todo/Entity/todo.entity";
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { SkillModule } from "./skill/skill.module";
+import { User } from "./user/entities/user.entity";
+import { CvModule } from "./cv/cv.module";
 
 @Module({
   imports: [
     PremierModule,
     TodoModule,
+    SkillModule,
+    CvModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [process.env.NODE_ENV == 'development' ? devConfig : prodConfig],
@@ -25,8 +32,10 @@ import { TodoEntity } from "./todo/Entity/todo.entity";
       database: 'gl322',
       autoLoadEntities: true,
       synchronize: true,
-      debug: true,
+      // debug: true,
     }),
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [],

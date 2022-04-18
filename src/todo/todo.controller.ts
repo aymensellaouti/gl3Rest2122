@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { Todo } from './Model/todo.model';
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { TodoService } from './todo.service';
 import { TodoEntity } from './Entity/todo.entity';
+import { AuthGuard } from "@nestjs/passport";
 @Controller({
   path: 'todo',
   version: '1',
@@ -19,6 +20,7 @@ export class TodoController {
     return this.todos;
   }
   @Post('fake')
+  @UseGuards(AuthGuard('jwt'))
   addTodo(@Body() newTodoData: Todo): Todo {
     let todo = new Todo();
     // const { name, description} = newTodoData;

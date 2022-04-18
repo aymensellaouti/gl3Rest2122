@@ -19,6 +19,7 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { editFileName, imageFileFilter } from '../generics/file-upload-utils';
 import { Request } from 'express';
 import { Cv } from './entities/cv.entity';
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('cv')
 export class CvController {
@@ -34,7 +35,6 @@ export class CvController {
       fileFilter: imageFileFilter,
     }),
   )
-  @UseGuards()
   create(
     @Body() createCvDto: CreateCvDto,
     @UploadedFile() file: Express.Multer.File,

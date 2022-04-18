@@ -40,7 +40,7 @@ export class Cv extends TiemstampEntity {
   path: string;
 
   @ManyToMany((MyTargetEntity) => Skill, (skill) => skill.cvs, {
-    eager: false,
+    eager: true,
   })
   @JoinTable({
     name: 'cv_skill',
